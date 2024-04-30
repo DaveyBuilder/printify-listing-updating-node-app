@@ -3,3 +3,6 @@
 node_modules/
 listingsForConversion.json
 *.csv
+successfulListings.json
+listingsForConversion(new).json
+failedlistings.json

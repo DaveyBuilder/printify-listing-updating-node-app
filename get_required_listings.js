@@ -35,12 +35,12 @@ async function getRequiredListings() {
     }
   }
 
-  console.log(listingsForConversion.length);
+  console.log(`listingsForConversion.length: ${listingsForConversion.length}`);
 
   // Write the listingsForConversion array to a JSON file
   try {
     await fs.writeFile(
-      "listingsForConversion.json",
+      "listingsForConversion(new).json",
       JSON.stringify(listingsForConversion, null, 2)
     );
     console.log("File has been saved.");
