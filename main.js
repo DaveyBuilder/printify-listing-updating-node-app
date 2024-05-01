@@ -84,38 +84,38 @@ const new_ids = {
 
 async function executeMainLogic() {
   // FETCH ALL LISTINGS FOR DISPLAY BLOCK
-  // let allProductsData = [];
-  // let currentPage = 1;
-  // let lastPage = null;
-  // do {
-  //   console.log(`Current page: ${currentPage}`);
-  //   const response = await fetchAllListings(currentPage);
-  //   console.log(`Current page contains ${response.data.length} listings`);
-  //   allProductsData.push(...response.data);
-  //   currentPage = response.current_page + 1;
-  //   lastPage = response.last_page;
-  //   console.log(
-  //     `All products array length now ${allProductsData.length} listings`
-  //   );
-  //   console.log(`Last page: ${lastPage}`);
-  // } while (currentPage <= 1); //lastPage);
-  // return allProductsData;
+  let allProductsData = [];
+  let currentPage = 1;
+  let lastPage = null;
+  do {
+    console.log(`Current page: ${currentPage}`);
+    const response = await fetchAllListings(currentPage);
+    console.log(`Current page contains ${response.data.length} listings`);
+    allProductsData.push(...response.data);
+    currentPage = response.current_page + 1;
+    lastPage = response.last_page;
+    console.log(
+      `All products array length now ${allProductsData.length} listings`
+    );
+    console.log(`Last page: ${lastPage}`);
+  } while (currentPage <= 1); //lastPage);
+  return allProductsData;
 
   //DELETION SECTION//////
-  let deletionResult;
-  try {
-    const data = await fs.readFile("successfulListings.json", "utf8"); // Read the file as a UTF-8 encoded string
-    let readData = JSON.parse(data); // Parse the JSON string back into an object
-    console.log(`Listings loaded: ${readData.length}`);
-    const idsForDeletion = readData.map((listing) => listing.new_id);
-    console.log(`Ids for deletion: ${idsForDeletion}`);
-    deletionResult = await deleteListings(idsForDeletion);
-  } catch (error) {
-    console.error("Error reading file:", error);
-  }
+  // let deletionResult;
+  // try {
+  //   const data = await fs.readFile("successfulListings.json", "utf8"); // Read the file as a UTF-8 encoded string
+  //   let readData = JSON.parse(data); // Parse the JSON string back into an object
+  //   console.log(`Listings loaded: ${readData.length}`);
+  //   const idsForDeletion = readData.map((listing) => listing.new_id);
+  //   console.log(`Ids for deletion: ${idsForDeletion}`);
+  //   deletionResult = await deleteListings(idsForDeletion);
+  // } catch (error) {
+  //   console.error("Error reading file:", error);
+  // }
 
-  //return deletionResult;
-  return;
+  // //return deletionResult;
+  // return;
 
   // 3. Now for the conversion
   // First read the listingsForConversion.json file
@@ -123,6 +123,7 @@ async function executeMainLogic() {
   let failedProductIDs = [];
   let successfulProductIds = [];
   let skippedListings = [];
+  let failedDeletions = [];
   let listings;
   try {
     const data = await fs.readFile("listingsForConversion(new).json", "utf8"); // Read the file as a UTF-8 encoded string
@@ -155,6 +156,12 @@ async function executeMainLogic() {
     }
 
     // First delete the listing from Printify
+    let listingIDForDeletion = [listing.id];
+    let didTheDeletionFail = await deleteListings(listingIDForDeletion);
+    if (didTheDeletionFail.length > 0) {
+      failedDeletions.push(...didTheDeletionFail);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     //Then create the new listing details
 
@@ -164,7 +171,7 @@ async function executeMainLogic() {
       if (new_ids[country].includes(existingVariant.id)) {
         let variant_object = {
           id: existingVariant.id,
-          //sku: existingVariant.sku,
+          sku: existingVariant.sku,
           price: existingVariant.price,
           is_enabled: existingVariant.is_enabled,
         };
@@ -288,9 +295,9 @@ async function executeMainLogic() {
       });
     }
 
-    // if (counter >= 20) {
-    //   break;
-    // }
+    if (counter >= 10) {
+      break;
+    }
   }
 
   console.log("Completed main process");

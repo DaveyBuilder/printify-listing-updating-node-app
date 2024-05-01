@@ -45,7 +45,7 @@ async function deleteListings(idsForDeletion) {
 
   console.log(`Remaining un-deleted Ids: ${failedDeletions}`);
 
-  return true;
+  return failedDeletions;
 }
 
 module.exports = deleteListings;
