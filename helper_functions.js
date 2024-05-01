@@ -92,8 +92,39 @@ async function createNewCountryListing(newProductTemplate, retries = 3) {
   }
 }
 
+async function deleteListingAPI(listingID, retries = 3) {
+  try {
+    const deletionResponse = await axios.delete(
+      `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${listingID}.json`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PRINTIFY_API_KEY}`,
+        },
+      }
+    );
+
+    return true;
+    //console.log(`Deletion response: ${JSON.stringify(deletionResponse)}`);
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      console.log(JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.error(error);
+    }
+    if (retries > 0) {
+      console.log(
+        `delete listing attempt failed. ${retries} retries left. Retrying...`
+      );
+      return deleteListingAPI(listingID, retries - 1);
+    } else {
+      return null;
+    }
+  }
+}
+
 module.exports = {
   fetchAllListings,
   updateCanadaSkus,
   createNewCountryListing,
+  deleteListingAPI,
 };
