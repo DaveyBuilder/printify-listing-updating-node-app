@@ -84,22 +84,32 @@ const new_ids = {
 
 async function executeMainLogic() {
   // FETCH ALL LISTINGS FOR DISPLAY BLOCK
-  let allProductsData = [];
-  let currentPage = 1;
-  let lastPage = null;
-  do {
-    console.log(`Current page: ${currentPage}`);
-    const response = await fetchAllListings(currentPage);
-    console.log(`Current page contains ${response.data.length} listings`);
-    allProductsData.push(...response.data);
-    currentPage = response.current_page + 1;
-    lastPage = response.last_page;
-    console.log(
-      `All products array length now ${allProductsData.length} listings`
-    );
-    console.log(`Last page: ${lastPage}`);
-  } while (currentPage <= 1); //lastPage);
-  return allProductsData;
+  // let allProductsData = [];
+  // let currentPage = 1;
+  // let lastPage = null;
+  // do {
+  //   console.log(`Current page: ${currentPage}`);
+  //   const response = await fetchAllListings(currentPage);
+  //   console.log(`Current page contains ${response.data.length} listings`);
+  //   allProductsData.push(...response.data);
+  //   currentPage = response.current_page + 1;
+  //   lastPage = response.last_page;
+  //   console.log(
+  //     `All products array length now ${allProductsData.length} listings`
+  //   );
+  //   console.log(`Last page: ${lastPage}`);
+  // } while (currentPage <= 3); //lastPage);
+  // const fileteredArray = [];
+  // for (const item of allProductsData) {
+  //   if (
+  //     item.title.includes("Alani Nu (black)") ||
+  //     item.title.includes("Vanilla Coca (Black)")
+  //   ) {
+  //     fileteredArray.push(item);
+  //   }
+  // }
+  // console.log(fileteredArray.length);
+  // return fileteredArray[3];
 
   //DELETION SECTION//////
   // let deletionResult;
