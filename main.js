@@ -98,18 +98,20 @@ async function executeMainLogic() {
   //     `All products array length now ${allProductsData.length} listings`
   //   );
   //   console.log(`Last page: ${lastPage}`);
-  // } while (currentPage <= 3); //lastPage);
+  // } while (currentPage <= 15); //lastPage);
   // const fileteredArray = [];
   // for (const item of allProductsData) {
   //   if (
-  //     item.title.includes("Alani Nu (black)") ||
-  //     item.title.includes("Vanilla Coca (Black)")
+  //     item.id === "663a3dbc8043668dd609d879" ||
+  //     item.id === "663a3dc1f69d3ba8560a8964" ||
+  //     item.id === "663a3dd554143ecbc6017767" ||
+  //     item.id === "663a3ddb49b8a671070f03a6"
   //   ) {
   //     fileteredArray.push(item);
   //   }
   // }
   // console.log(fileteredArray.length);
-  // return fileteredArray[3];
+  // return fileteredArray;
 
   //DELETION SECTION//////
   // let deletionResult;
@@ -135,7 +137,21 @@ async function executeMainLogic() {
   let skippedListings = [];
   let failedDeletions = [];
   let listings;
+  let successfulOriginalIds = new Set();
   try {
+    // Read the successful listings from the previous operation
+    const successfulData = await fs.readFile(
+      "successfulListings(previous).json",
+      "utf8"
+    );
+    const successfulListings = JSON.parse(successfulData);
+    successfulOriginalIds = new Set(
+      successfulListings.map((listing) => listing.original_id)
+    );
+    console.log(
+      `Previously successful listings count: ${successfulOriginalIds.size}`
+    );
+
     const data = await fs.readFile("listingsForConversion(new).json", "utf8"); // Read the file as a UTF-8 encoded string
     listings = JSON.parse(data); // Parse the JSON string back into an object
     console.log(`Listings loaded: ${listings.length}`);
@@ -143,10 +159,20 @@ async function executeMainLogic() {
     console.error("Error reading file:", error);
   }
 
-  //return listings[0];
+  // Filter listings to exclude those that have been successfully processed before
+  const unprocessedListings = listings.filter(
+    (listing) => !successfulOriginalIds.has(listing.id)
+  );
+
+  // Now you can proceed with processing unprocessedListings
+  console.log(`Unprocessed listings count: ${unprocessedListings.length}`);
+  //return unprocessedListings;
+
+  //const secondHalfListings = unprocessedListings.slice(-694);
 
   let counter = 0;
-  for (const listing of listings) {
+  //for (const listing of listings) {
+  for (const listing of unprocessedListings) {
     await new Promise((resolve) => setTimeout(resolve, 500));
     counter++;
     let country;
@@ -305,9 +331,9 @@ async function executeMainLogic() {
       });
     }
 
-    if (counter >= 10) {
-      break;
-    }
+    // if (counter >= 10) {
+    //   break;
+    // }
   }
 
   console.log("Completed main process");

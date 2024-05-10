@@ -6,3 +6,5 @@ listingsForConversion.json
 successfulListings.json
 listingsForConversion(new).json
 failedlistings.json
+successfulListings(previous).json
+successfulListings(previousprevious).json
